@@ -14,18 +14,24 @@
       BaseButton warn
     </BaseButton>
 
-    <BaseButton color="danger">
+    <BaseButton color="danger" style="margin-right:1rem;">
       BaseButton danger
     </BaseButton>
+
+    <AsyncButton>
+      Disabled and animated for 2 seconds if clicked
+    </AsyncButton>
+
   </div>
 </template>
 
 <script>
+import AsyncButton from '@/components/AsyncButton.vue';
 import BaseButton from '../components/BaseButton.vue'
 
 export default {
   name: 'HomePage',
-  components: { BaseButton }
+  components: { BaseButton, AsyncButton }
 }
 </script>
 
