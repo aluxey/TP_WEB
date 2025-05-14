@@ -1,11 +1,21 @@
 <template>
   <div class="home-page">
     <h1>Here comes the content of the HomePage.</h1>
-    <BaseButton style="margin-right:1rem;">
-      BaseButton with custom margin
+
+    <BaseButton color="primary" style="margin-right:1rem;">
+      BaseButton primary
     </BaseButton>
-    <BaseButton disabled>
+
+    <BaseButton disabled  style="margin-right:1rem;">
       BaseButton disabled
+    </BaseButton>
+
+    <BaseButton color="warn" style="margin-right:1rem;">
+      BaseButton warn
+    </BaseButton>
+
+    <BaseButton color="danger">
+      BaseButton danger
     </BaseButton>
   </div>
 </template>
