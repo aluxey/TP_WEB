@@ -1,7 +1,6 @@
 <template>
   <div class="home-page">
     <h1>Here comes the content of the HomePage.</h1>
-
     <BaseButton color="primary" style="margin-right:1rem;">
       BaseButton primary
     </BaseButton>
@@ -18,20 +17,34 @@
       BaseButton danger
     </BaseButton>
 
-    <AsyncButton>
-      Disabled and animated for 2 seconds if clicked
+    <AsyncButton @click="handleAsyncClick">
+      Disabled and animated for {{ clickCount }}s
     </AsyncButton>
-
   </div>
 </template>
 
 <script>
-import AsyncButton from '@/components/AsyncButton.vue';
-import BaseButton from '../components/BaseButton.vue'
+import BaseButton  from '../components/BaseButton.vue'
+import AsyncButton from '../components/AsyncButton.vue'
 
 export default {
   name: 'HomePage',
-  components: { BaseButton, AsyncButton }
+  components: { BaseButton, AsyncButton },
+  data() {
+    return {
+      clickCount: 1
+    }
+  },
+  methods: {
+    handleAsyncClick() {
+      // construit une Promise qui résout après clickCount secondes
+      const delay = this.clickCount * 1000
+      this.clickCount += 1
+      return new Promise(resolve => {
+        setTimeout(resolve, delay)
+      })
+    }
+  }
 }
 </script>
 

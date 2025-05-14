@@ -1,13 +1,12 @@
-<!-- src/components/AsyncButton.vue -->
 <template>
   <BaseButton
+    v-bind="$attrs"
     :disabled="isPending"
     :color="color"
     @click.stop.prevent="handleClick"
   >
     <template #default>
       <span v-if="isPending">
-        <!-- si tu as FontAwesome -->
         <font-awesome-icon :icon="['fas','circle-notch']" pulse />
       </span>
       <span v-else>
@@ -27,7 +26,8 @@ export default {
   props: {
     color: {
       type: String,
-      default: 'primary'
+      default: 'primary',
+      validator: v => ['primary','warn','danger'].includes(v)
     }
   },
   data() {
@@ -36,21 +36,34 @@ export default {
     }
   },
   methods: {
-    handleClick() {
-      // Désactive le bouton
+    handleClick(event) {
+      // 1. Récupère le handler passé depuis le parent via @click
+      const originalOnClick = this.$attrs.onClick
+      if (typeof originalOnClick !== 'function') {
+        return
+      }
+
+      // 2. Désactive immédiatement le bouton
       this.isPending = true
-      // Retourne une Promise qui résout au bout de 2 s
-      return new Promise(resolve => {
-        setTimeout(() => {
-          this.isPending = false
-          resolve()
-        }, 2000)
-      })
+
+      // 3. Appelle le handler parent et récupère SA promise
+      const p = originalOnClick(event)
+
+      // 4. Se réactive quand la promise se termine
+      if (p && typeof p.finally === 'function') {
+        p.finally(() => { this.isPending = false })
+      } else {
+        // au cas où ce n'est pas une Promise
+        this.isPending = false
+      }
+
+      // 5. On renvoie la promise pour chaîner si besoin
+      return p
     }
   }
 }
 </script>
 
 <style scoped>
-/* Rien de plus : tout est géré par BaseButton */
+/* (les styles de BaseButton s’appliquent, on n’ajoute rien ici) */
 </style>
