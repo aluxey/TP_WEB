@@ -1,35 +1,36 @@
-<!-- src/App.vue -->
 <template>
   <base-layout>
-    <!-- on passe `currentUser` en prop et on écoute l'événement -->
-    <SigninButton
-      :user="currentUser"
+    <signin-button
       @profile="onProfile"
       style="margin-bottom: 1rem;"
     />
 
-    <!-- on injecte aussi `currentUser` dans HomePage -->
-    <router-view :user="currentUser" />
+    <router-view />
   </base-layout>
 </template>
 
 <script>
-import BaseLayout   from "./components/BaseLayout.vue";
-import SigninButton from "./components/SigninButton.vue";
+import { computed } from 'vue'
+import BaseLayout   from './components/BaseLayout.vue'
+import SigninButton from './components/SigninButton.vue'
 
 export default {
-  name: "App",
+  name: 'App',
   components: { BaseLayout, SigninButton },
   data() {
     return {
       currentUser: null
-    };
+    }
+  },
+  provide() {
+    return {
+      user: computed(() => this.currentUser)
+    }
   },
   methods: {
     onProfile(profile) {
-      // met à jour l'état partagé
-      this.currentUser = profile;
+      this.currentUser = profile
     }
   }
-};
+}
 </script>

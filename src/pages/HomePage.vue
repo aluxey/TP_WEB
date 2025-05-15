@@ -2,62 +2,54 @@
   <div class="home-page">
     <h1>Here comes the content of the HomePage.</h1>
 
-    <SigninButton @profile="onProfile" style="margin-bottom:1.5rem;">
-      Se connecter à Microsoft Graph
-    </SigninButton>
+    <p v-if="user">
+      <strong>Logged in as:</strong> {{ user.name }} ({{ user.username }})
+    </p>
+    <p v-else>
+      Vous n’êtes pas connecté.
+    </p>
 
-    <BaseButton color="primary" style="margin-right:1rem;">
+    <!-- your other buttons still live here: -->
+    <base-button color="primary" style="margin-right:1rem;">
       BaseButton primary
-    </BaseButton>
-
-    <BaseButton disabled style="margin-right:1rem;">
+    </base-button>
+    <base-button disabled style="margin-right:1rem;">
       BaseButton disabled
-    </BaseButton>
-
-    <BaseButton color="warn" style="margin-right:1rem;">
+    </base-button>
+    <base-button color="warn" style="margin-right:1rem;">
       BaseButton warn
-    </BaseButton>
-
-    <BaseButton color="danger" style="margin-right:1rem;">
+    </base-button>
+    <base-button color="danger" style="margin-right:1rem;">
       BaseButton danger
-    </BaseButton>
+    </base-button>
 
-    <AsyncButton @click="handleAsyncClick">
+    <async-button @click="handleAsyncClick">
       Disabled and animated for {{ clickCount }}s
-    </AsyncButton>
-
-    <div v-if="currentUser" class="user-info" style="margin-top:2rem;">
-      <p>
-        <strong>Logged in as:</strong>
-        {{ currentUser.name }} ({{ currentUser.username }})
-      </p>
-    </div>
+    </async-button>
   </div>
 </template>
 
 <script>
-import BaseButton   from "../components/BaseButton.vue";
-import AsyncButton  from "../components/AsyncButton.vue";
+import BaseButton  from '../components/BaseButton.vue'
+import AsyncButton from '../components/AsyncButton.vue'
 
 export default {
-  name: "HomePage",
-  props: {
-    user: Object
-  },
+  name: 'HomePage',
   components: { BaseButton, AsyncButton },
+  inject: ['user'],
   data() {
     return {
       clickCount: 1
-    };
+    }
   },
   methods: {
     handleAsyncClick() {
-      const delay = this.clickCount * 1000;
-      this.clickCount++;
-      return new Promise(resolve => setTimeout(resolve, delay));
+      const delay = this.clickCount * 1000
+      this.clickCount += 1
+      return new Promise(resolve => setTimeout(resolve, delay))
     }
   }
-};
+}
 </script>
 
 <style scoped>
