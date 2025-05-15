@@ -1,3 +1,4 @@
+<!-- src/pages/HomePage.vue -->
 <template>
   <div class="home-page">
     <h1>Here comes the content of the HomePage.</h1>
@@ -9,45 +10,48 @@
       Vous n’êtes pas connecté.
     </p>
 
-    <!-- your other buttons still live here: -->
-    <base-button color="primary" style="margin-right:1rem;">
+    <BaseButton color="primary" class="mr-4">
       BaseButton primary
-    </base-button>
-    <base-button disabled style="margin-right:1rem;">
+    </BaseButton>
+    <BaseButton disabled class="mr-4">
       BaseButton disabled
-    </base-button>
-    <base-button color="warn" style="margin-right:1rem;">
+    </BaseButton>
+    <BaseButton color="warn" class="mr-4">
       BaseButton warn
-    </base-button>
-    <base-button color="danger" style="margin-right:1rem;">
+    </BaseButton>
+    <BaseButton color="danger" class="mr-4">
       BaseButton danger
-    </base-button>
+    </BaseButton>
 
-    <async-button @click="handleAsyncClick">
+    <AsyncButton @click="handleAsyncClick">
       Disabled and animated for {{ clickCount }}s
-    </async-button>
+    </AsyncButton>
   </div>
 </template>
 
 <script>
-import BaseButton  from '../components/BaseButton.vue'
-import AsyncButton from '../components/AsyncButton.vue'
+import { ref, computed } from 'vue'
+import { useStore }    from 'vuex'
+import BaseButton      from '../components/BaseButton.vue'
+import AsyncButton     from '../components/AsyncButton.vue'
 
 export default {
   name: 'HomePage',
   components: { BaseButton, AsyncButton },
-  inject: ['user'],
-  data() {
-    return {
-      clickCount: 1
-    }
-  },
-  methods: {
-    handleAsyncClick() {
-      const delay = this.clickCount * 1000
-      this.clickCount += 1
+  setup() {
+    const store = useStore()
+    // récupère currentUser via getter
+    const user = computed(() => store.getters.currentUser)
+    // compteur pour AsyncButton
+    const clickCount = ref(1)
+
+    function handleAsyncClick() {
+      const delay = clickCount.value * 1000
+      clickCount.value += 1
       return new Promise(resolve => setTimeout(resolve, delay))
     }
+
+    return { user, clickCount, handleAsyncClick }
   }
 }
 </script>
@@ -59,5 +63,8 @@ export default {
 }
 .home-page h1 {
   margin-bottom: 1.5rem;
+}
+.mr-4 {
+  margin-right: 1rem;
 }
 </style>

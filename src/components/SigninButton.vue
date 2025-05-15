@@ -1,25 +1,34 @@
 <template>
-  <async-button @click="login" color="primary">
+  <AsyncButton @click="login" color="primary">
     <template #default>
       <span v-if="user">{{ user.name }}</span>
       <span v-else>Sign in with Microsoft</span>
     </template>
-  </async-button>
+  </AsyncButton>
 </template>
 
 <script>
+import { mapGetters, useStore } from 'vuex'
 import AsyncButton        from './AsyncButton.vue'
 import { signInAndGetUser } from '../lib/microsoftGraph'
 
 export default {
   name: 'SigninButton',
   components: { AsyncButton },
-  inject: ['user'],
+  computed: {
+    ...mapGetters(['currentUser']), 
+    user() {
+      return this.currentUser
+    }
+  },
+  setup() {
+    const store = useStore()
+    return { store }
+  },
   methods: {
     async login() {
       const profile = await signInAndGetUser()
-      // tell App.vue to update its shared state
-      this.$emit('profile', profile)
+      this.store.commit('setUser', profile)
       return profile
     }
   }
