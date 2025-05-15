@@ -14,3 +14,4 @@ export default {
   components: { BaseLayout, SigninButton }
 }
 </script>
+
