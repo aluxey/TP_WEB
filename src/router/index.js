@@ -1,7 +1,7 @@
-// src/router/index.js
 import { createRouter, createWebHistory } from 'vue-router'
-import HomePage                   from '../pages/HomePage.vue'
-import ConversationsIndexPage     from '../pages/ConversationsIndexPage.vue'
+import HomePage               from '../pages/HomePage.vue'
+import ConversationsIndexPage from '../pages/ConversationsIndexPage.vue'
+import store                  from '../store'
 
 const routes = [
   {
@@ -12,13 +12,25 @@ const routes = [
   {
     path: '/conversations',
     name: 'ConversationsIndex',
-    component: ConversationsIndexPage
+    component: ConversationsIndexPage,
+    meta: { requiresAuth: true }
   }
 ]
 
 const router = createRouter({
   history: createWebHistory(),
   routes
+})
+
+// 2) Guard global
+router.beforeEach((to, from, next) => {
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
+  const isLoggedIn   = store.getters.isLoggedIn
+
+  if (requiresAuth && !isLoggedIn) {
+    return next({ name: 'Home' })
+  } 
+  next()
 })
 
 export default router
