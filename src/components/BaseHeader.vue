@@ -1,19 +1,48 @@
 <template>
   <header class="base-header">
     <nav>
-      <a href="#" class="home-link">
+      <router-link to="/" class="home-link">
         <i class="fas fa-home"></i>
         Home
-      </a>
+      </router-link>
+
+      <router-link
+        v-if="currentUser"
+        to="/conversations"
+        class="nav-item"
+      >
+        Conversations
+      </router-link>
+
       <span class="spacer"></span>
-      <span class="status">Not yet logged in</span>
+
+      <!-- Status / user name -->
+      <span class="status">
+        <template v-if="currentUser">
+          {{ currentUser.name }}
+        </template>
+        <template v-else>
+          Not yet logged in
+        </template>
+      </span>
     </nav>
   </header>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+import { RouterLink } from 'vue-router'
+
 export default {
-  name: 'BaseHeader'
+  name: 'BaseHeader',
+  components: {
+    RouterLink
+  },
+  computed: {
+    ...mapGetters({
+      currentUser: 'currentUser'
+    })
+  }
 }
 </script>
 
@@ -27,15 +56,12 @@ nav {
   display: flex;
   align-items: center;
 }
-.home-link {
-  display: flex;
-  align-items: center;
+.home-link,
+.nav-item {
+  margin-right: 1rem;
   text-decoration: none;
   color: inherit;
   font-weight: bold;
-}
-.home-link i {
-  margin-right: 0.5rem;
 }
 .spacer {
   flex: 1;
