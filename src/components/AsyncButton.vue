@@ -1,6 +1,7 @@
+<!-- src/components/AsyncButton.vue -->
 <template>
   <BaseButton
-    v-bind="$attrs"
+    v-bind="filteredAttrs"
     :disabled="isPending"
     :color="color"
     @click.stop.prevent="handleClick"
@@ -17,53 +18,61 @@
 </template>
 
 <script>
-import BaseButton from './BaseButton.vue'
+import BaseButton from "./BaseButton.vue";
 
 export default {
-  name: 'AsyncButton',
+  name: "AsyncButton",
   components: { BaseButton },
   inheritAttrs: false,
   props: {
     color: {
       type: String,
-      default: 'primary',
-      validator: v => ['primary','warn','danger'].includes(v)
+      default: "primary",
+      validator: v => ["primary", "warn", "danger"].includes(v)
     }
   },
   data() {
     return {
       isPending: false
+    };
+  },
+  computed: {
+    filteredAttrs() { 
+      const result = {};
+      for (const key in this.$attrs) {
+        if (key === "onClick") continue;
+        result[key] = this.$attrs[key];
+      }
+      return result;
     }
   },
   methods: {
     handleClick(event) {
-      // 1. Récupère le handler passé depuis le parent via @click
-      const originalOnClick = this.$attrs.onClick
-      if (typeof originalOnClick !== 'function') {
-        return
-      }
+      if (this.isPending) return;
 
-      // 2. Désactive immédiatement le bouton
-      this.isPending = true
+      const fn = this.$attrs.onClick;
+      if (typeof fn !== "function") return;
 
-      // 3. Appelle le handler parent et récupère SA promise
-      const p = originalOnClick(event)
+      this.isPending = true;
 
-      // 4. Se réactive quand la promise se termine
-      if (p && typeof p.finally === 'function') {
-        p.finally(() => { this.isPending = false })
-      } else {
-        // au cas où ce n'est pas une Promise
-        this.isPending = false
-      }
+      const p = Promise.resolve()
+        .then(() => fn(event))
+        .catch(err => {
+          if (err.errorCode === "user_cancelled" || err.errorMessage?.includes("cancelled")) {
+            return;
+          }
+          throw err;
+        })
+        .finally(() => {
+          // 5) Réactive le bouton
+          this.isPending = false;
+        });
 
-      // 5. On renvoie la promise pour chaîner si besoin
-      return p
+      return p;
     }
   }
-}
+};
 </script>
 
 <style scoped>
-/* (les styles de BaseButton s’appliquent, on n’ajoute rien ici) */
 </style>
